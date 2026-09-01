@@ -1,0 +1,49 @@
+/* ============================================
+   AMBER LEDGER — Design Tokens
+   Crypto-native & bold dark-first system
+   ============================================ */
+
+:root {
+  /* Surfaces — near-black, slightly blue, never pure #000 */
+  --bg-canvas: #0A0B0E;
+  --bg-surface: #14161B;
+  --bg-surface-raised: #1C1F26;
+  --bg-surface-hover: #23262F;
+  --border-subtle: #2A2E38;
+  --border-strong: #3A3F4C;
+
+  /* Accent — Amber/Gold, the ONE brand color, used sparingly and with intent */
+  --accent-amber-50: #FFF8E6;
+  --accent-amber-300: #FFCB57;
+  --accent-amber-500: #F5A623;   /* primary brand accent */
+  --accent-amber-600: #D98A0A;
+  --accent-amber-700: #A96700;
+  --accent-amber-glow: rgba(245, 166, 35, 0.35);
+
+  /* Signal colors — reserved ONLY for buy/sell/profit/loss semantics */
+  --signal-buy: #16C784;
+  --signal-buy-bg: rgba(22, 199, 132, 0.12);
+  --signal-sell: #EA3943;
+  --signal-sell-bg: rgba(234, 57, 67, 0.12);
+  --signal-warning: #F5A623;
+
+  /* Text */
+  --text-primary: #F4F5F7;
+  --text-secondary: #9CA3AF;
+  --text-tertiary: #6B7280;
+  --text-on-accent: #14161B;
+
+  /* Typography */
+  --font-display: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'IBM Plex Mono', monospace;
+
+  /* Radii */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+
+  /* Transitions */
+  --transition-fast: 120ms ease;
+  --transition-normal: 200ms ease;
+}
