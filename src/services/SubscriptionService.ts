@@ -150,6 +150,7 @@ class SubscriptionService {
       started_at: now,
       current_period_start: now,
       current_period_end: periodEnd,
+      renewal_ready: false,
     });
 
     await this.logEvent(userId, subscription.id, 'subscription_created', {

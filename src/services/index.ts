@@ -3,3 +3,7 @@ export { tokenService, TokenService } from './TokenService';
 export { emailService, EmailService } from './EmailService';
 export { authService, AuthService } from './AuthService';
 export { userService, UserService } from './UserService';
+export { subscriptionService, SubscriptionService } from './SubscriptionService';
+export { exchangeService, ExchangeService } from './ExchangeService';
+export { marketService, MarketService } from './MarketService';
+export { coinService, CoinService } from './CoinService';

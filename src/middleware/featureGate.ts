@@ -14,7 +14,7 @@ import { ForbiddenError } from '../utils/errors';
 export function requireFeature(featureKey: string) {
   return async (req: Request, _res: Response, next: NextFunction): Promise<void> => {
     try {
-      const userId = req.user?.id;
+      const userId = req.user?.userId;
       if (!userId) {
         next(new ForbiddenError('Authentication required'));
         return;
@@ -53,7 +53,7 @@ export function requireUsageLimit(
 ) {
   return async (req: Request, _res: Response, next: NextFunction): Promise<void> => {
     try {
-      const userId = req.user?.id;
+      const userId = req.user?.userId;
       if (!userId) {
         next(new ForbiddenError('Authentication required'));
         return;

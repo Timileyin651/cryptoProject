@@ -1,34 +1,15 @@
-import knex from 'knex';
-import dotenv from 'dotenv';
-import path from 'path';
+/**
+ * Seed runner — uses sequelize-cli via the package.json "seed" script.
+ *
+ * If you need custom seeding logic, run the seeders directly:
+ *   npx sequelize-cli db:seed:all
+ *
+ * This file is kept as a convenience wrapper so `npm run seed` still works.
+ */
+import { execSync } from 'child_process';
 
-dotenv.config({ path: path.resolve(__dirname, '../../.env') });
-
-const db = knex({
-  client: 'mysql2',
-  connection: {
-    host: process.env.DB_HOST || 'localhost',
-    port: parseInt(process.env.DB_PORT || '3306', 10),
-    database: process.env.DB_NAME || 'crypto_arbitrage',
-    user: process.env.DB_USER || 'root',
-    password: process.env.DB_PASSWORD || '',
-  },
-  seeds: {
-    directory: path.resolve(__dirname, '../../seeders'),
-    extension: 'ts',
-  },
-});
-
-async function run() {
-  try {
-    await db.seed.run();
-    console.log('Seeding completed successfully');
-  } catch (error) {
-    console.error('Seeding error:', error);
-    process.exit(1);
-  } finally {
-    await db.destroy();
-  }
+try {
+  execSync('npx sequelize-cli db:seed:all', { stdio: 'inherit' });
+} catch {
+  process.exit(1);
 }
-
-run();
