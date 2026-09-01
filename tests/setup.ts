@@ -1,0 +1,10 @@
+process.env.NODE_ENV = 'test';
+process.env.PORT = '3001';
+process.env.DB_HOST = 'localhost';
+process.env.DB_NAME = 'crypto_arbitrage_test';
+process.env.DB_USER = 'root';
+process.env.DB_PASSWORD = '';
+process.env.REDIS_HOST = 'localhost';
+process.env.REDIS_PORT = '6379';
+process.env.LOG_LEVEL = 'error';
+process.env.CORS_ORIGIN = 'http://localhost:3001';
