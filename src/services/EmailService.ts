@@ -14,11 +14,7 @@ export class EmailService {
     });
   }
 
-  async sendPasswordResetEmail(
-    to: string,
-    firstName: string,
-    resetToken: string,
-  ): Promise<void> {
+  async sendPasswordResetEmail(to: string, firstName: string, resetToken: string): Promise<void> {
     // Placeholder: log the email. Replace with real email provider integration.
     logger.info(`[EMAIL] Password reset email to ${to}`, {
       to,

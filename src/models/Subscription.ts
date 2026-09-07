@@ -1,4 +1,4 @@
-import { DataTypes, Optional } from 'sequelize';
+import { DataTypes, Optional, Sequelize } from 'sequelize';
 import { BaseModel, BaseModelAttributes, BaseModelCreationAttributes } from './BaseModel';
 
 export type SubscriptionStatus = 'active' | 'inactive' | 'cancelled' | 'expired' | 'past_due';
@@ -37,7 +37,7 @@ export class Subscription extends BaseModel<
   public renewal_ready!: boolean;
   public gateway_subscription_id!: string | null;
 
-  static initModel() {
+  static initModel(sequelize: Sequelize) {
     return Subscription.init(
       {
         ...BaseModel.baseColumns,
@@ -98,7 +98,7 @@ export class Subscription extends BaseModel<
         },
       },
       {
-        sequelize: Subscription.sequelize,
+        sequelize,
         tableName: 'subscriptions',
         modelName: 'Subscription',
       },

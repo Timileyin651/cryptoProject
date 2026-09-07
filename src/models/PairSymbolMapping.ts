@@ -1,4 +1,4 @@
-import { DataTypes } from 'sequelize';
+import { DataTypes, Sequelize } from 'sequelize';
 import { BaseModel, BaseModelAttributes, BaseModelCreationAttributes } from './BaseModel';
 
 export interface PairSymbolMappingAttributes extends BaseModelAttributes {
@@ -26,7 +26,7 @@ export class PairSymbolMapping extends BaseModel<
   public quote_coin_id!: number | null;
   public separator!: string | null;
 
-  static initModel() {
+  static initModel(sequelize: Sequelize) {
     return PairSymbolMapping.init(
       {
         ...BaseModel.baseColumns,
@@ -73,7 +73,7 @@ export class PairSymbolMapping extends BaseModel<
         },
       },
       {
-        sequelize: PairSymbolMapping.sequelize,
+        sequelize,
         tableName: 'pair_symbol_mappings',
         modelName: 'PairSymbolMapping',
         indexes: [

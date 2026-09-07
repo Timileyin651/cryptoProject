@@ -149,7 +149,8 @@ class CoinService {
     if (data.explorerUrl !== undefined) updates.explorer_url = data.explorerUrl;
     if (data.rpcUrl !== undefined) updates.rpc_url = data.rpcUrl;
     if (data.isActive !== undefined) updates.is_active = data.isActive;
-    if (data.avgBlockTimeSeconds !== undefined) updates.avg_block_time_seconds = data.avgBlockTimeSeconds;
+    if (data.avgBlockTimeSeconds !== undefined)
+      updates.avg_block_time_seconds = data.avgBlockTimeSeconds;
     if (data.metadata !== undefined) updates.metadata = data.metadata;
 
     if (Object.keys(updates).length > 0) {
@@ -164,7 +165,9 @@ class CoinService {
    * For a given coin, find which networks it's available on
    * across all exchanges.
    */
-  async getNetworksForCoin(coinId: number): Promise<(ExchangeCoin & { network: Network | null; exchange: any })[]> {
+  async getNetworksForCoin(
+    coinId: number,
+  ): Promise<(ExchangeCoin & { network: Network | null; exchange: any })[]> {
     return ExchangeCoin.findAll({
       where: { coin_id: coinId },
       include: [

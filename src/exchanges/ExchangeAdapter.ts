@@ -4,9 +4,25 @@
  * into these types before returning.
  */
 
+/** A single funding rate snapshot for a perpetual swap. */
+export interface FundingRateSnapshot {
+  /** Normalized symbol, e.g. "BTC/USDT:USDT". */
+  symbol: string;
+  /** The funding rate as a fraction (e.g. 0.0001 = 0.01%). */
+  fundingRate: number;
+  /** Timestamp of the funding rate. */
+  timestamp: Date;
+  /** When this snapshot was fetched. */
+  fetchedAt: Date;
+  /** The next funding time, if known. */
+  nextFundingTime?: Date;
+  /** Estimated funding rate interval in ms (e.g. 8 hours). */
+  fundingIntervalMs?: number;
+}
+
 /** A single ticker / price quote. */
 export interface TickerSnapshot {
-  symbol: string;          // exchange-specific symbol, e.g. "BTCUSDT"
+  symbol: string; // exchange-specific symbol, e.g. "BTCUSDT"
   bid: string;
   ask: string;
   last: string;
@@ -116,6 +132,22 @@ export interface ExchangeAdapter {
 
   /** Fetch recent trades. */
   fetchTrades(symbol: string, limit?: number): Promise<TradeSnapshot[]>;
+
+  // ── Funding rates ────────────────────────────────────────────────────
+
+  /**
+   * Fetch the current funding rate for a perpetual swap symbol.
+   * Returns null if the symbol is not a swap/perp or the exchange
+   * does not support funding rate queries.
+   */
+  fetchFundingRate(symbol: string): Promise<FundingRateSnapshot | null>;
+
+  /**
+   * Fetch historical funding rates for a perpetual swap symbol.
+   * @param symbol - e.g. "BTC/USDT:USDT" (perp format)
+   * @param limit - max number of records (default 100)
+   */
+  fetchFundingRateHistory(symbol: string, limit?: number): Promise<FundingRateSnapshot[]>;
 
   // ── Coin / network info ──────────────────────────────────────────────
 

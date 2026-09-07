@@ -183,7 +183,9 @@ class ExchangeService {
   // ──────────────────── Query helpers ───────────────────────────────────
 
   /** Get all coins listed on a specific exchange. */
-  async getCoinsForExchange(exchangeId: number): Promise<(ExchangeCoin & { coin: Coin; network: Network | null })[]> {
+  async getCoinsForExchange(
+    exchangeId: number,
+  ): Promise<(ExchangeCoin & { coin: Coin; network: Network | null })[]> {
     return ExchangeCoin.findAll({
       where: { exchange_id: exchangeId },
       include: [

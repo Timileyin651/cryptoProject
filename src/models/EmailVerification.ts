@@ -1,4 +1,4 @@
-import { DataTypes } from 'sequelize';
+import { DataTypes, Sequelize } from 'sequelize';
 import { BaseModel, BaseModelAttributes, BaseModelCreationAttributes } from './BaseModel';
 
 export interface EmailVerificationAttributes extends BaseModelAttributes {
@@ -11,15 +11,16 @@ export interface EmailVerificationAttributes extends BaseModelAttributes {
 export type EmailVerificationCreationAttributes = BaseModelCreationAttributes &
   Omit<EmailVerificationAttributes, 'id' | 'created_at' | 'updated_at'>;
 
-export class EmailVerification
-  extends BaseModel<EmailVerificationAttributes, EmailVerificationCreationAttributes>
-{
+export class EmailVerification extends BaseModel<
+  EmailVerificationAttributes,
+  EmailVerificationCreationAttributes
+> {
   public user_id!: number;
   public token_hash!: string;
   public expires_at!: Date;
   public is_used!: boolean;
 
-  static initModel() {
+  static initModel(sequelize: Sequelize) {
     return EmailVerification.init(
       {
         ...BaseModel.baseColumns,
@@ -47,7 +48,7 @@ export class EmailVerification
         },
       },
       {
-        sequelize: EmailVerification.sequelize,
+        sequelize,
         tableName: 'email_verifications',
         modelName: 'EmailVerification',
       },

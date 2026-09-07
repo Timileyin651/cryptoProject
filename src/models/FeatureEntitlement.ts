@@ -1,4 +1,4 @@
-import { DataTypes, Optional } from 'sequelize';
+import { DataTypes, Optional, Sequelize } from 'sequelize';
 import { BaseModel, BaseModelAttributes, BaseModelCreationAttributes } from './BaseModel';
 
 export interface FeatureEntitlementAttributes extends BaseModelAttributes {
@@ -20,7 +20,7 @@ export class FeatureEntitlement extends BaseModel<
   public is_enabled!: boolean;
   public limit_value!: number | null;
 
-  static initModel() {
+  static initModel(sequelize: Sequelize) {
     return FeatureEntitlement.init(
       {
         ...BaseModel.baseColumns,
@@ -46,7 +46,7 @@ export class FeatureEntitlement extends BaseModel<
         },
       },
       {
-        sequelize: FeatureEntitlement.sequelize,
+        sequelize,
         tableName: 'feature_entitlements',
         modelName: 'FeatureEntitlement',
         indexes: [

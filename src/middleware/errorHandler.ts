@@ -3,33 +3,45 @@ import { AppError, ValidationError } from '../utils/errors';
 import { logger } from '../utils/logger';
 
 export const errorHandler = (
-  err: Error,
+  err: unknown,
   req: Request,
   res: Response,
   _next: NextFunction,
 ): void => {
-  if (err instanceof ValidationError && err.errors.length > 0) {
-    res.status(err.statusCode).json({
+  // Normalize: ensure we always have a real Error
+  const error = err instanceof Error ? err : new Error(String(err));
+
+  // CORS errors — return 403, not 500
+  if (error.message?.startsWith('CORS origin rejected:')) {
+    res.status(403).json({
       status: 'error',
-      message: err.message,
-      errors: err.errors,
+      message: 'Origin not allowed by CORS policy',
     });
     return;
   }
 
-  if (err instanceof AppError) {
-    res.status(err.statusCode).json({
+  if (error instanceof ValidationError && error.errors.length > 0) {
+    res.status(error.statusCode).json({
       status: 'error',
-      message: err.message,
+      message: error.message,
+      errors: error.errors,
     });
     return;
   }
 
-  logger.error('Unhandled error:', { error: err.message, stack: err.stack });
+  if (error instanceof AppError) {
+    res.status(error.statusCode).json({
+      status: 'error',
+      message: error.message,
+    });
+    return;
+  }
 
+  logger.error('Unhandled error:', { error: error.message, stack: error.stack });
+
+  // Never leak error details to the client in any environment
   res.status(500).json({
     status: 'error',
-    message:
-      process.env.NODE_ENV === 'production' ? 'Internal server error' : err.message,
+    message: 'Internal server error',
   });
 };

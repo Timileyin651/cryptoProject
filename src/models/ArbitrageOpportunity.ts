@@ -1,4 +1,4 @@
-import { DataTypes } from 'sequelize';
+import { DataTypes, Sequelize } from 'sequelize';
 import { BaseModel, BaseModelAttributes, BaseModelCreationAttributes } from './BaseModel';
 
 export interface ArbitrageOpportunityAttributes extends BaseModelAttributes {
@@ -15,9 +15,10 @@ export interface ArbitrageOpportunityAttributes extends BaseModelAttributes {
 export type ArbitrageOpportunityCreationAttributes = BaseModelCreationAttributes &
   Omit<ArbitrageOpportunityAttributes, 'id' | 'created_at' | 'updated_at'>;
 
-export class ArbitrageOpportunity
-  extends BaseModel<ArbitrageOpportunityAttributes, ArbitrageOpportunityCreationAttributes>
-{
+export class ArbitrageOpportunity extends BaseModel<
+  ArbitrageOpportunityAttributes,
+  ArbitrageOpportunityCreationAttributes
+> {
   public buy_exchange_id!: number;
   public sell_exchange_id!: number;
   public symbol!: string;
@@ -27,7 +28,7 @@ export class ArbitrageOpportunity
   public detected_at!: Date;
   public status!: 'detected' | 'executed' | 'expired';
 
-  static initModel() {
+  static initModel(sequelize: Sequelize) {
     return ArbitrageOpportunity.init(
       {
         ...BaseModel.baseColumns,
@@ -75,7 +76,7 @@ export class ArbitrageOpportunity
         },
       },
       {
-        sequelize: ArbitrageOpportunity.sequelize,
+        sequelize,
         tableName: 'arbitrage_opportunities',
         modelName: 'ArbitrageOpportunity',
       },

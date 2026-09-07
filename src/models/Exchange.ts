@@ -1,4 +1,4 @@
-import { DataTypes } from 'sequelize';
+import { DataTypes, Sequelize } from 'sequelize';
 import { BaseModel, BaseModelAttributes, BaseModelCreationAttributes } from './BaseModel';
 
 export interface ExchangeAttributes extends BaseModelAttributes {
@@ -39,7 +39,7 @@ export class Exchange extends BaseModel<ExchangeAttributes, ExchangeCreationAttr
   public trust_score!: number | null;
   public metadata!: Record<string, unknown> | null;
 
-  static initModel() {
+  static initModel(sequelize: Sequelize) {
     return Exchange.init(
       {
         ...BaseModel.baseColumns,
@@ -114,7 +114,7 @@ export class Exchange extends BaseModel<ExchangeAttributes, ExchangeCreationAttr
         },
       },
       {
-        sequelize: Exchange.sequelize,
+        sequelize,
         tableName: 'exchanges',
         modelName: 'Exchange',
       },

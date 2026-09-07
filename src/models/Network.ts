@@ -1,4 +1,4 @@
-import { DataTypes } from 'sequelize';
+import { DataTypes, Sequelize } from 'sequelize';
 import { BaseModel, BaseModelAttributes, BaseModelCreationAttributes } from './BaseModel';
 
 export interface NetworkAttributes extends BaseModelAttributes {
@@ -27,7 +27,7 @@ export class Network extends BaseModel<NetworkAttributes, NetworkCreationAttribu
   public avg_block_time_seconds!: number | null;
   public metadata!: Record<string, unknown> | null;
 
-  static initModel() {
+  static initModel(sequelize: Sequelize) {
     return Network.init(
       {
         ...BaseModel.baseColumns,
@@ -74,7 +74,7 @@ export class Network extends BaseModel<NetworkAttributes, NetworkCreationAttribu
         },
       },
       {
-        sequelize: Network.sequelize,
+        sequelize,
         tableName: 'networks',
         modelName: 'Network',
       },

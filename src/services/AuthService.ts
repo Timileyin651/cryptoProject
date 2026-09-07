@@ -6,12 +6,7 @@ import { emailVerificationRepository } from '../repositories/EmailVerificationRe
 import { passwordResetRepository } from '../repositories/PasswordResetRepository';
 import { tokenService, TokenPayload, AccessTokenPair } from './TokenService';
 import { emailService } from './EmailService';
-import {
-  BadRequestError,
-  ConflictError,
-  UnauthorizedError,
-  NotFoundError,
-} from '../utils/errors';
+import { BadRequestError, ConflictError, UnauthorizedError, NotFoundError } from '../utils/errors';
 
 const BCRYPT_SALT_ROUNDS = 12;
 
@@ -22,7 +17,14 @@ export class AuthService {
     firstName: string,
     lastName: string,
     userAgent?: string,
-  ): Promise<{ user: { id: number; email: string; firstName: string; lastName: string }; tokens: AccessTokenPair }> {
+  ): Promise<{
+    user: { id: number; email: string; firstName: string; lastName: string };
+    tokens: AccessTokenPair;
+  }> {
+    if (!email || !password || !firstName || !lastName) {
+      throw new BadRequestError('Email, password, firstName, and lastName are required');
+    }
+
     const existing = await userRepository.findByEmail(email);
     if (existing) {
       throw new ConflictError('Email already registered');
@@ -67,7 +69,10 @@ export class AuthService {
     email: string,
     password: string,
     userAgent?: string,
-  ): Promise<{ user: { id: number; email: string; firstName: string; lastName: string }; tokens: AccessTokenPair }> {
+  ): Promise<{
+    user: { id: number; email: string; firstName: string; lastName: string };
+    tokens: AccessTokenPair;
+  }> {
     const user = await userRepository.findByEmail(email);
     if (!user || !user.is_active) {
       throw new UnauthorizedError('Invalid email or password');
@@ -93,23 +98,10 @@ export class AuthService {
     };
   }
 
-  async refresh(
-    refreshTokenValue: string,
-    userAgent?: string,
-  ): Promise<AccessTokenPair> {
-    // Find the refresh token by looking through all valid tokens
-    const allTokens = await refreshTokenRepository.findAll({
-      where: { is_revoked: false },
-    });
-
-    let matchedToken = null;
-    for (const stored of allTokens) {
-      const isValid = await tokenService.verifyTokenHash(refreshTokenValue, stored.token_hash);
-      if (isValid) {
-        matchedToken = stored;
-        break;
-      }
-    }
+  async refresh(refreshTokenValue: string, userAgent?: string): Promise<AccessTokenPair> {
+    // Look up the token by hash (indexed) instead of scanning all tokens
+    const tokenHash = await tokenService.hashToken(refreshTokenValue);
+    const matchedToken = await refreshTokenRepository.findValidByTokenHash(tokenHash);
 
     if (!matchedToken) {
       throw new UnauthorizedError('Invalid refresh token');
@@ -143,16 +135,8 @@ export class AuthService {
 
   async logout(refreshTokenValue?: string): Promise<void> {
     if (refreshTokenValue) {
-      const allTokens = await refreshTokenRepository.findAll({
-        where: { is_revoked: false },
-      });
-      for (const stored of allTokens) {
-        const isValid = await tokenService.verifyTokenHash(refreshTokenValue, stored.token_hash);
-        if (isValid) {
-          await refreshTokenRepository.revokeByTokenHash(stored.token_hash);
-          break;
-        }
-      }
+      const tokenHash = await tokenService.hashToken(refreshTokenValue);
+      await refreshTokenRepository.revokeByTokenHash(tokenHash);
     }
   }
 
@@ -183,18 +167,9 @@ export class AuthService {
   }
 
   async resetPassword(token: string, newPassword: string): Promise<void> {
-    const allTokens = await passwordResetRepository.findAll({
-      where: { is_used: false },
-    });
-
-    let matchedToken = null;
-    for (const stored of allTokens) {
-      const isValid = await tokenService.verifyTokenHash(token, stored.token_hash);
-      if (isValid) {
-        matchedToken = stored;
-        break;
-      }
-    }
+    // Hash the incoming token and look up by hash (indexed)
+    const tokenHash = await tokenService.hashToken(token);
+    const matchedToken = await passwordResetRepository.findValidByTokenHash(tokenHash);
 
     if (!matchedToken) {
       throw new BadRequestError('Invalid or expired reset token');
@@ -214,18 +189,9 @@ export class AuthService {
   }
 
   async verifyEmail(token: string): Promise<void> {
-    const allTokens = await emailVerificationRepository.findAll({
-      where: { is_used: false },
-    });
-
-    let matchedToken = null;
-    for (const stored of allTokens) {
-      const isValid = await tokenService.verifyTokenHash(token, stored.token_hash);
-      if (isValid) {
-        matchedToken = stored;
-        break;
-      }
-    }
+    // Hash the incoming token and look up by hash (indexed)
+    const tokenHash = await tokenService.hashToken(token);
+    const matchedToken = await emailVerificationRepository.findValidByTokenHash(tokenHash);
 
     if (!matchedToken) {
       throw new BadRequestError('Invalid or expired verification token');

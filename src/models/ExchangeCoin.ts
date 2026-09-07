@@ -1,4 +1,4 @@
-import { DataTypes } from 'sequelize';
+import { DataTypes, Sequelize } from 'sequelize';
 import { BaseModel, BaseModelAttributes, BaseModelCreationAttributes } from './BaseModel';
 
 export interface ExchangeCoinAttributes extends BaseModelAttributes {
@@ -20,7 +20,10 @@ export interface ExchangeCoinAttributes extends BaseModelAttributes {
 export type ExchangeCoinCreationAttributes = BaseModelCreationAttributes &
   Omit<ExchangeCoinAttributes, 'id' | 'created_at' | 'updated_at'>;
 
-export class ExchangeCoin extends BaseModel<ExchangeCoinAttributes, ExchangeCoinCreationAttributes> {
+export class ExchangeCoin extends BaseModel<
+  ExchangeCoinAttributes,
+  ExchangeCoinCreationAttributes
+> {
   public exchange_id!: number;
   public coin_id!: number;
   public network_id!: number | null;
@@ -35,7 +38,7 @@ export class ExchangeCoin extends BaseModel<ExchangeCoinAttributes, ExchangeCoin
   public exchange_symbol!: string | null;
   public metadata!: Record<string, unknown> | null;
 
-  static initModel() {
+  static initModel(sequelize: Sequelize) {
     return ExchangeCoin.init(
       {
         ...BaseModel.baseColumns,
@@ -107,7 +110,7 @@ export class ExchangeCoin extends BaseModel<ExchangeCoinAttributes, ExchangeCoin
         },
       },
       {
-        sequelize: ExchangeCoin.sequelize,
+        sequelize,
         tableName: 'exchange_coins',
         modelName: 'ExchangeCoin',
         indexes: [

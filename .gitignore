@@ -11,3 +11,8 @@ coverage/
 *~
 .vscode/
 .idea/
+
+# Deploy / infrastructure
+deploy/nginx/certs/
+backups/
+*.sql.gz

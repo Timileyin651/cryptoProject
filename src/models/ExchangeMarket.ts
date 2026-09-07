@@ -1,4 +1,4 @@
-import { DataTypes } from 'sequelize';
+import { DataTypes, Sequelize } from 'sequelize';
 import { BaseModel, BaseModelAttributes, BaseModelCreationAttributes } from './BaseModel';
 
 export type MarketType = 'spot' | 'futures' | 'margin';
@@ -43,7 +43,7 @@ export class ExchangeMarket extends BaseModel<
   public supports_trades!: boolean;
   public metadata!: Record<string, unknown> | null;
 
-  static initModel() {
+  static initModel(sequelize: Sequelize) {
     return ExchangeMarket.init(
       {
         ...BaseModel.baseColumns,
@@ -118,7 +118,7 @@ export class ExchangeMarket extends BaseModel<
         },
       },
       {
-        sequelize: ExchangeMarket.sequelize,
+        sequelize,
         tableName: 'exchange_markets',
         modelName: 'ExchangeMarket',
         indexes: [

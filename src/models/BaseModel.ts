@@ -1,5 +1,4 @@
 import { Model, DataTypes, Optional } from 'sequelize';
-import { sequelize } from '../config/database';
 
 export interface BaseModelAttributes {
   id: number;
@@ -37,8 +36,4 @@ export abstract class BaseModel<
       defaultValue: DataTypes.NOW,
     },
   } as const;
-
-  static get sequelize() {
-    return sequelize;
-  }
 }

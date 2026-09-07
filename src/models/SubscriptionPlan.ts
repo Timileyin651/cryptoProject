@@ -1,4 +1,4 @@
-import { DataTypes, Optional } from 'sequelize';
+import { DataTypes, Optional, Sequelize } from 'sequelize';
 import { BaseModel, BaseModelAttributes, BaseModelCreationAttributes } from './BaseModel';
 
 export interface SubscriptionPlanAttributes extends BaseModelAttributes {
@@ -17,6 +17,33 @@ export interface SubscriptionPlanAttributes extends BaseModelAttributes {
   max_exchanges_connected: number | null;
   rate_limit_per_minute: number | null;
   data_retention_days: number | null;
+  // ── Scanner-specific limits ──────────────────────────────────────
+  /** Max opportunities returned per query (null = unlimited). */
+  max_opportunities_per_query: number | null;
+  /** Max exchange pairs visible. */
+  max_exchange_pairs: number | null;
+  /** Max history days for analytics. */
+  max_analytics_days: number | null;
+  /** Max saved scanner preferences. */
+  max_saved_preferences: number | null;
+  /** Max watchlist items total. */
+  max_watchlist_items: number | null;
+  /** Max favorite coins. */
+  max_favorite_coins: number | null;
+  /** Max favorite exchanges. */
+  max_favorite_exchanges: number | null;
+  /** Max alert cooldown seconds (minimum allowed). */
+  min_alert_cooldown_seconds: number | null;
+  /** Whether detailed opportunity data is available. */
+  detailed_opportunities: boolean;
+  /** Whether real-time scanning is enabled. */
+  realtime_scanning: boolean;
+  /** Whether funding/perp view is enabled. */
+  funding_view: boolean;
+  /** Whether Telegram alert channel is enabled. */
+  telegram_alerts: boolean;
+  /** Whether API access is enabled (Enterprise). */
+  api_access: boolean;
 }
 
 export type SubscriptionPlanCreationAttributes = BaseModelCreationAttributes &
@@ -40,8 +67,21 @@ export class SubscriptionPlan extends BaseModel<
   public max_exchanges_connected!: number | null;
   public rate_limit_per_minute!: number | null;
   public data_retention_days!: number | null;
+  public max_opportunities_per_query!: number | null;
+  public max_exchange_pairs!: number | null;
+  public max_analytics_days!: number | null;
+  public max_saved_preferences!: number | null;
+  public max_watchlist_items!: number | null;
+  public max_favorite_coins!: number | null;
+  public max_favorite_exchanges!: number | null;
+  public min_alert_cooldown_seconds!: number | null;
+  public detailed_opportunities!: boolean;
+  public realtime_scanning!: boolean;
+  public funding_view!: boolean;
+  public telegram_alerts!: boolean;
+  public api_access!: boolean;
 
-  static initModel() {
+  static initModel(sequelize: Sequelize) {
     return SubscriptionPlan.init(
       {
         ...BaseModel.baseColumns,
@@ -109,9 +149,88 @@ export class SubscriptionPlan extends BaseModel<
           allowNull: true,
           defaultValue: 30,
         },
+        // ── Scanner-specific ──
+        max_opportunities_per_query: {
+          type: DataTypes.INTEGER,
+          allowNull: true,
+          defaultValue: 25,
+          comment: 'Max opportunities per query (null = unlimited)',
+        },
+        max_exchange_pairs: {
+          type: DataTypes.INTEGER,
+          allowNull: true,
+          defaultValue: 3,
+          comment: 'Max exchange pairs visible',
+        },
+        max_analytics_days: {
+          type: DataTypes.INTEGER,
+          allowNull: true,
+          defaultValue: 7,
+          comment: 'Max history days for analytics',
+        },
+        max_saved_preferences: {
+          type: DataTypes.INTEGER,
+          allowNull: true,
+          defaultValue: 3,
+          comment: 'Max saved scanner preferences',
+        },
+        max_watchlist_items: {
+          type: DataTypes.INTEGER,
+          allowNull: true,
+          defaultValue: 10,
+          comment: 'Max watchlist items total',
+        },
+        max_favorite_coins: {
+          type: DataTypes.INTEGER,
+          allowNull: true,
+          defaultValue: 5,
+          comment: 'Max favorite coins',
+        },
+        max_favorite_exchanges: {
+          type: DataTypes.INTEGER,
+          allowNull: true,
+          defaultValue: 2,
+          comment: 'Max favorite exchanges',
+        },
+        min_alert_cooldown_seconds: {
+          type: DataTypes.INTEGER,
+          allowNull: true,
+          defaultValue: 7200,
+          comment: 'Minimum alert cooldown seconds',
+        },
+        detailed_opportunities: {
+          type: DataTypes.BOOLEAN,
+          allowNull: false,
+          defaultValue: false,
+          comment: 'Whether detailed opportunity data is available',
+        },
+        realtime_scanning: {
+          type: DataTypes.BOOLEAN,
+          allowNull: false,
+          defaultValue: false,
+          comment: 'Whether real-time scanning is enabled',
+        },
+        funding_view: {
+          type: DataTypes.BOOLEAN,
+          allowNull: false,
+          defaultValue: false,
+          comment: 'Whether funding/perp view is enabled',
+        },
+        telegram_alerts: {
+          type: DataTypes.BOOLEAN,
+          allowNull: false,
+          defaultValue: false,
+          comment: 'Whether Telegram alert channel is enabled',
+        },
+        api_access: {
+          type: DataTypes.BOOLEAN,
+          allowNull: false,
+          defaultValue: false,
+          comment: 'Whether API access is enabled (Enterprise)',
+        },
       },
       {
-        sequelize: SubscriptionPlan.sequelize,
+        sequelize,
         tableName: 'subscription_plans',
         modelName: 'SubscriptionPlan',
       },

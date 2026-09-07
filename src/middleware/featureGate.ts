@@ -24,9 +24,7 @@ export function requireFeature(featureKey: string) {
       (req as any).featureAccess = access;
 
       if (!access.allowed) {
-        throw new ForbiddenError(
-          `Feature '${featureKey}' is not available on your current plan.`,
-        );
+        throw new ForbiddenError(`Feature '${featureKey}' is not available on your current plan.`);
       }
 
       next();

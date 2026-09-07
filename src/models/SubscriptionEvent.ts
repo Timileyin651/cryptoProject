@@ -1,4 +1,4 @@
-import { DataTypes, Optional } from 'sequelize';
+import { DataTypes, Optional, Sequelize } from 'sequelize';
 import { BaseModel, BaseModelAttributes, BaseModelCreationAttributes } from './BaseModel';
 
 export interface SubscriptionEventAttributes extends BaseModelAttributes {
@@ -20,7 +20,7 @@ export class SubscriptionEvent extends BaseModel<
   public event_type!: string;
   public payload!: Record<string, unknown> | null;
 
-  static initModel() {
+  static initModel(sequelize: Sequelize) {
     return SubscriptionEvent.init(
       {
         ...BaseModel.baseColumns,
@@ -48,7 +48,7 @@ export class SubscriptionEvent extends BaseModel<
         },
       },
       {
-        sequelize: SubscriptionEvent.sequelize,
+        sequelize,
         tableName: 'subscription_events',
         modelName: 'SubscriptionEvent',
       },

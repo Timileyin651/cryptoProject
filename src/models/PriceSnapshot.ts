@@ -1,4 +1,4 @@
-import { DataTypes } from 'sequelize';
+import { DataTypes, Sequelize } from 'sequelize';
 import { BaseModel, BaseModelAttributes, BaseModelCreationAttributes } from './BaseModel';
 
 export interface PriceSnapshotAttributes extends BaseModelAttributes {
@@ -12,16 +12,17 @@ export interface PriceSnapshotAttributes extends BaseModelAttributes {
 export type PriceSnapshotCreationAttributes = BaseModelCreationAttributes &
   Omit<PriceSnapshotAttributes, 'id' | 'created_at' | 'updated_at'>;
 
-export class PriceSnapshot
-  extends BaseModel<PriceSnapshotAttributes, PriceSnapshotCreationAttributes>
-{
+export class PriceSnapshot extends BaseModel<
+  PriceSnapshotAttributes,
+  PriceSnapshotCreationAttributes
+> {
   public trading_pair_id!: number;
   public bid_price!: string;
   public ask_price!: string;
   public volume_24h!: string;
   public fetched_at!: Date;
 
-  static initModel() {
+  static initModel(sequelize: Sequelize) {
     return PriceSnapshot.init(
       {
         ...BaseModel.baseColumns,
@@ -53,7 +54,7 @@ export class PriceSnapshot
         },
       },
       {
-        sequelize: PriceSnapshot.sequelize,
+        sequelize,
         tableName: 'price_snapshots',
         modelName: 'PriceSnapshot',
       },

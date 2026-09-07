@@ -134,10 +134,7 @@ class MarketService {
     minQtyTick?: number | null;
     status?: MarketStatus;
   }): Promise<ExchangeMarket> {
-    const existing = await this.getMarketForPairOnExchange(
-      data.tradingPairId,
-      data.exchangeId,
-    );
+    const existing = await this.getMarketForPairOnExchange(data.tradingPairId, data.exchangeId);
 
     if (existing) {
       const updates: Record<string, unknown> = {};
@@ -237,9 +234,9 @@ class MarketService {
    * Find all active markets for a given normalised symbol across exchanges.
    * Useful for the arbitrage scanner to know where a pair is tradeable.
    */
-  async findActiveMarketsForSymbol(normalizedSymbol: string): Promise<
-    (ExchangeMarket & { exchange: Exchange; tradingPair: TradingPair })[]
-  > {
+  async findActiveMarketsForSymbol(
+    normalizedSymbol: string,
+  ): Promise<(ExchangeMarket & { exchange: Exchange; tradingPair: TradingPair })[]> {
     const mappings = await this.resolveAllExchangeSymbols(normalizedSymbol);
     const results: (ExchangeMarket & { exchange: Exchange; tradingPair: TradingPair })[] = [];
 

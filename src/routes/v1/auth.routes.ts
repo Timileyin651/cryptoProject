@@ -21,20 +21,9 @@ router.post(
   authController.register,
 );
 
-router.post(
-  '/auth/login',
-  authRateLimiter,
-  loginValidator,
-  validate,
-  authController.login,
-);
+router.post('/auth/login', authRateLimiter, loginValidator, validate, authController.login);
 
-router.post(
-  '/auth/refresh',
-  refreshValidator,
-  validate,
-  authController.refresh,
-);
+router.post('/auth/refresh', refreshValidator, validate, authController.refresh);
 
 router.post('/auth/logout', authController.logout);
 

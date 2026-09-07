@@ -11,7 +11,11 @@ const config: Config = {
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
   },
-  setupFilesAfterEnv: [],
+  // Allow Jest to transform ESM packages used by CCXT
+  transformIgnorePatterns: [
+    '/node_modules/(?!(ccxt|@noble|@changesets)/)',
+  ],
+  setupFilesAfterEnv: ['<rootDir>/tests/setup.ts'],
   collectCoverageFrom: ['src/**/*.ts', '!src/**/*.d.ts', '!src/server.ts'],
   coverageDirectory: 'coverage',
   verbose: true,

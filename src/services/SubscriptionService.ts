@@ -10,7 +10,7 @@ import { NotFoundError, ForbiddenError } from '../utils/errors';
 // ── Cached feature access result ──
 export interface FeatureAccess {
   allowed: boolean;
-  limit: number | null;   // null = unlimited
+  limit: number | null; // null = unlimited
   used: number;
   remaining: number | null;
 }
@@ -114,12 +114,14 @@ class SubscriptionService {
   /**
    * Convenience guard – throws ForbiddenError when feature is not available.
    */
-  async requireFeature(userId: number, featureKey: string, currentUsage?: number): Promise<FeatureAccess> {
+  async requireFeature(
+    userId: number,
+    featureKey: string,
+    currentUsage?: number,
+  ): Promise<FeatureAccess> {
     const access = await this.checkFeature(userId, featureKey, currentUsage);
     if (!access.allowed) {
-      throw new ForbiddenError(
-        `Feature '${featureKey}' is not available on your current plan.`,
-      );
+      throw new ForbiddenError(`Feature '${featureKey}' is not available on your current plan.`);
     }
     return access;
   }

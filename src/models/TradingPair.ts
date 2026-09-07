@@ -1,4 +1,4 @@
-import { DataTypes } from 'sequelize';
+import { DataTypes, Sequelize } from 'sequelize';
 import { BaseModel, BaseModelAttributes, BaseModelCreationAttributes } from './BaseModel';
 
 export interface TradingPairAttributes extends BaseModelAttributes {
@@ -19,7 +19,7 @@ export class TradingPair extends BaseModel<TradingPairAttributes, TradingPairCre
   public quote_currency!: string;
   public is_active!: boolean;
 
-  static initModel() {
+  static initModel(sequelize: Sequelize) {
     return TradingPair.init(
       {
         ...BaseModel.baseColumns,
@@ -50,7 +50,7 @@ export class TradingPair extends BaseModel<TradingPairAttributes, TradingPairCre
         },
       },
       {
-        sequelize: TradingPair.sequelize,
+        sequelize,
         tableName: 'trading_pairs',
         modelName: 'TradingPair',
       },

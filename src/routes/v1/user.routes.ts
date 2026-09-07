@@ -11,12 +11,7 @@ router.use(authenticate);
 
 router.get('/users/me', userController.getProfile);
 
-router.patch(
-  '/users/me',
-  updateProfileValidator,
-  validate,
-  userController.updateProfile,
-);
+router.patch('/users/me', updateProfileValidator, validate, userController.updateProfile);
 
 router.patch(
   '/users/me/password',

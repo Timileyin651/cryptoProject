@@ -1,4 +1,4 @@
-import { DataTypes } from 'sequelize';
+import { DataTypes, Sequelize } from 'sequelize';
 import { BaseModel, BaseModelAttributes, BaseModelCreationAttributes } from './BaseModel';
 
 export interface CoinAttributes extends BaseModelAttributes {
@@ -25,7 +25,7 @@ export class Coin extends BaseModel<CoinAttributes, CoinCreationAttributes> {
   public is_active!: boolean;
   public metadata!: Record<string, unknown> | null;
 
-  static initModel() {
+  static initModel(sequelize: Sequelize) {
     return Coin.init(
       {
         ...BaseModel.baseColumns,
@@ -67,7 +67,7 @@ export class Coin extends BaseModel<CoinAttributes, CoinCreationAttributes> {
         },
       },
       {
-        sequelize: Coin.sequelize,
+        sequelize,
         tableName: 'coins',
         modelName: 'Coin',
       },

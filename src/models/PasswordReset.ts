@@ -1,4 +1,4 @@
-import { DataTypes } from 'sequelize';
+import { DataTypes, Sequelize } from 'sequelize';
 import { BaseModel, BaseModelAttributes, BaseModelCreationAttributes } from './BaseModel';
 
 export interface PasswordResetAttributes extends BaseModelAttributes {
@@ -11,15 +11,16 @@ export interface PasswordResetAttributes extends BaseModelAttributes {
 export type PasswordResetCreationAttributes = BaseModelCreationAttributes &
   Omit<PasswordResetAttributes, 'id' | 'created_at' | 'updated_at'>;
 
-export class PasswordReset
-  extends BaseModel<PasswordResetAttributes, PasswordResetCreationAttributes>
-{
+export class PasswordReset extends BaseModel<
+  PasswordResetAttributes,
+  PasswordResetCreationAttributes
+> {
   public user_id!: number;
   public token_hash!: string;
   public expires_at!: Date;
   public is_used!: boolean;
 
-  static initModel() {
+  static initModel(sequelize: Sequelize) {
     return PasswordReset.init(
       {
         ...BaseModel.baseColumns,
@@ -47,7 +48,7 @@ export class PasswordReset
         },
       },
       {
-        sequelize: PasswordReset.sequelize,
+        sequelize,
         tableName: 'password_resets',
         modelName: 'PasswordReset',
       },

@@ -1,10 +1,7 @@
 import { body } from 'express-validator';
 
 export const registerValidator = [
-  body('email')
-    .isEmail()
-    .normalizeEmail()
-    .withMessage('Valid email is required'),
+  body('email').isEmail().normalizeEmail().withMessage('Valid email is required'),
   body('password')
     .isLength({ min: 8 })
     .withMessage('Password must be at least 8 characters')
@@ -21,34 +18,20 @@ export const registerValidator = [
 ];
 
 export const loginValidator = [
-  body('email')
-    .isEmail()
-    .normalizeEmail()
-    .withMessage('Valid email is required'),
-  body('password')
-    .notEmpty()
-    .withMessage('Password is required'),
+  body('email').isEmail().normalizeEmail().withMessage('Valid email is required'),
+  body('password').notEmpty().withMessage('Password is required'),
 ];
 
 export const refreshValidator = [
-  body('refreshToken')
-    .optional()
-    .isString()
-    .withMessage('Refresh token must be a string'),
+  body('refreshToken').optional().isString().withMessage('Refresh token must be a string'),
 ];
 
 export const forgotPasswordValidator = [
-  body('email')
-    .isEmail()
-    .normalizeEmail()
-    .withMessage('Valid email is required'),
+  body('email').isEmail().normalizeEmail().withMessage('Valid email is required'),
 ];
 
 export const resetPasswordValidator = [
-  body('token')
-    .notEmpty()
-    .isString()
-    .withMessage('Reset token is required'),
+  body('token').notEmpty().isString().withMessage('Reset token is required'),
   body('password')
     .isLength({ min: 8 })
     .withMessage('Password must be at least 8 characters')
@@ -57,8 +40,6 @@ export const resetPasswordValidator = [
 ];
 
 export const verifyEmailValidator = [
-  body('token')
-    .optional()
-    .isString(),
+  body('token').optional().isString(),
   // Also accept query param for link clicks
 ];

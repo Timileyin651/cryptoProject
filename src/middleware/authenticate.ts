@@ -20,9 +20,7 @@ export const authenticate = async (
     const authHeader = req.headers.authorization;
     const cookieToken = req.cookies?.accessToken;
 
-    const token = authHeader?.startsWith('Bearer ')
-      ? authHeader.slice(7)
-      : cookieToken;
+    const token = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : cookieToken;
 
     if (!token) {
       throw new UnauthorizedError('No authentication token provided');

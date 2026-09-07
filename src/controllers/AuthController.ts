@@ -2,17 +2,33 @@ import { Request, Response, NextFunction } from 'express';
 import { authService } from '../services/AuthService';
 import { tokenService } from '../services/TokenService';
 import { config } from '../config';
-import { logger } from '../utils/logger';
 
 export class AuthController {
+  constructor() {
+    // Bind all handlers so Express can call them without losing `this`
+    this.register = this.register.bind(this);
+    this.login = this.login.bind(this);
+    this.refresh = this.refresh.bind(this);
+    this.logout = this.logout.bind(this);
+    this.forgotPassword = this.forgotPassword.bind(this);
+    this.resetPassword = this.resetPassword.bind(this);
+    this.verifyEmail = this.verifyEmail.bind(this);
+  }
+
   async register(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
+      if (!req.body || typeof req.body !== 'object') {
+        res.status(400).json({ status: 'error', message: 'Request body is required' });
+        return;
+      }
       const { email, password, firstName, lastName } = req.body;
       const userAgent = req.headers['user-agent'];
       const result = await authService.register(email, password, firstName, lastName, userAgent);
 
       this.setRefreshTokenCookie(res, result.tokens.refreshToken);
 
+      // Do NOT return accessToken in JSON response for API registration
+      // (web registration redirects, API should use refresh flow)
       res.status(201).json({
         status: 'success',
         data: {
@@ -27,6 +43,10 @@ export class AuthController {
 
   async login(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
+      if (!req.body || typeof req.body !== 'object') {
+        res.status(400).json({ status: 'error', message: 'Request body is required' });
+        return;
+      }
       const { email, password } = req.body;
       const userAgent = req.headers['user-agent'];
       const result = await authService.login(email, password, userAgent);
@@ -113,14 +133,8 @@ export class AuthController {
 
   async verifyEmail(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const token = req.query.token as string || req.body.token;
+      const token = (req.query.token as string) || req.body.token;
       await authService.verifyEmail(token);
-
-      // If browser request (from link click), redirect to home
-      if (req.accepts('html')) {
-        res.redirect('/?verified=true');
-        return;
-      }
 
       res.status(200).json({
         status: 'success',
@@ -128,80 +142,6 @@ export class AuthController {
       });
     } catch (error) {
       next(error);
-    }
-  }
-
-  // Web view routes for EJS pages
-  renderRegister(_req: Request, res: Response): void {
-    res.render('auth/register', { title: 'Register', error: null });
-  }
-
-  renderLogin(_req: Request, res: Response): void {
-    res.render('auth/login', { title: 'Login', error: null });
-  }
-
-  renderForgotPassword(_req: Request, res: Response): void {
-    res.render('auth/forgot-password', { title: 'Forgot Password', error: null, sent: false });
-  }
-
-  renderResetPassword(req: Request, res: Response): void {
-    const token = req.query.token as string || '';
-    res.render('auth/reset-password', { title: 'Reset Password', error: null, token });
-  }
-
-  // Web form submissions (thin wrappers that call the same services)
-  async webRegister(req: Request, res: Response, next: NextFunction): Promise<void> {
-    try {
-      const { email, password, firstName, lastName } = req.body;
-      const userAgent = req.headers['user-agent'];
-      await authService.register(email, password, firstName, lastName, userAgent);
-      res.redirect('/auth/login?registered=true');
-    } catch (error) {
-      const err = error as Error;
-      res.render('auth/register', { title: 'Register', error: err.message });
-    }
-  }
-
-  async webLogin(req: Request, res: Response, next: NextFunction): Promise<void> {
-    try {
-      const { email, password } = req.body;
-      const userAgent = req.headers['user-agent'];
-      const result = await authService.login(email, password, userAgent);
-
-      // Set cookies for web session
-      this.setRefreshTokenCookie(res, result.tokens.refreshToken);
-      this.setAccessTokenCookie(res, result.tokens.accessToken);
-
-      res.redirect('/');
-    } catch (error) {
-      const err = error as Error;
-      res.render('auth/login', { title: 'Login', error: err.message });
-    }
-  }
-
-  async webForgotPassword(req: Request, res: Response, _next: NextFunction): Promise<void> {
-    try {
-      const { email } = req.body;
-      await authService.forgotPassword(email);
-      res.render('auth/forgot-password', { title: 'Forgot Password', error: null, sent: true });
-    } catch (error) {
-      const err = error as Error;
-      res.render('auth/forgot-password', { title: 'Forgot Password', error: err.message, sent: false });
-    }
-  }
-
-  async webResetPassword(req: Request, res: Response, _next: NextFunction): Promise<void> {
-    try {
-      const { token, password } = req.body;
-      await authService.resetPassword(token, password);
-      res.redirect('/auth/login?reset=true');
-    } catch (error) {
-      const err = error as Error;
-      res.render('auth/reset-password', {
-        title: 'Reset Password',
-        error: err.message,
-        token: req.body.token || '',
-      });
     }
   }
 

@@ -32,11 +32,7 @@ export class BaseRepository<T extends Model> {
     return this.model.create(data as T['_creationAttributes'], options);
   }
 
-  async update(
-    id: number,
-    data: Partial<T>,
-    options?: UpdateOptions,
-  ): Promise<T> {
+  async update(id: number, data: Partial<T>, options?: UpdateOptions): Promise<T> {
     const record = await this.findByIdOrThrow(id);
     await record.update(data, options);
     return record;

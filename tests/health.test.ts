@@ -10,36 +10,19 @@ describe('Health Endpoints', () => {
     });
   });
 
-  describe('GET / (home page)', () => {
-    it('should return 200 and render HTML', async () => {
-      const response = await request(app).get('/');
+  describe('GET /health/live', () => {
+    it('should return 200 with status ok and timestamp', async () => {
+      const response = await request(app).get('/health/live');
       expect(response.status).toBe(200);
-      expect(response.headers['content-type']).toMatch(/html/);
-      expect(response.text).toContain('Crypto Arbitrage Scanner');
-    });
-  });
-
-  describe('GET /auth/register', () => {
-    it('should return 200 and render register page', async () => {
-      const response = await request(app).get('/auth/register');
-      expect(response.status).toBe(200);
-      expect(response.headers['content-type']).toMatch(/html/);
-      expect(response.text).toContain('Create Account');
-    });
-  });
-
-  describe('GET /auth/login', () => {
-    it('should return 200 and render login page', async () => {
-      const response = await request(app).get('/auth/login');
-      expect(response.status).toBe(200);
-      expect(response.headers['content-type']).toMatch(/html/);
-      expect(response.text).toContain('Sign In');
+      expect(response.body).toHaveProperty('status', 'ok');
+      expect(response.body).toHaveProperty('timestamp');
+      expect(response.body).toHaveProperty('uptime');
     });
   });
 
   describe('GET /nonexistent', () => {
-    it('should return 404 for unknown routes', async () => {
-      const response = await request(app).get('/nonexistent');
+    it('should return 404 for unknown routes outside API prefix', async () => {
+      const response = await request(app).get('/some-completely-fake-route-xyz');
       expect(response.status).toBe(404);
       expect(response.body).toHaveProperty('status', 'error');
     });

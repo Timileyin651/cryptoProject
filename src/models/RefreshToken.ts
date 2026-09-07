@@ -1,4 +1,4 @@
-import { DataTypes } from 'sequelize';
+import { DataTypes, Sequelize } from 'sequelize';
 import { BaseModel, BaseModelAttributes, BaseModelCreationAttributes } from './BaseModel';
 
 export interface RefreshTokenAttributes extends BaseModelAttributes {
@@ -13,9 +13,10 @@ export interface RefreshTokenAttributes extends BaseModelAttributes {
 export type RefreshTokenCreationAttributes = BaseModelCreationAttributes &
   Omit<RefreshTokenAttributes, 'id' | 'created_at' | 'updated_at'>;
 
-export class RefreshToken
-  extends BaseModel<RefreshTokenAttributes, RefreshTokenCreationAttributes>
-{
+export class RefreshToken extends BaseModel<
+  RefreshTokenAttributes,
+  RefreshTokenCreationAttributes
+> {
   public user_id!: number;
   public token_hash!: string;
   public family!: string;
@@ -23,7 +24,7 @@ export class RefreshToken
   public expires_at!: Date;
   public user_agent!: string | null;
 
-  static initModel() {
+  static initModel(sequelize: Sequelize) {
     return RefreshToken.init(
       {
         ...BaseModel.baseColumns,
@@ -59,7 +60,7 @@ export class RefreshToken
         },
       },
       {
-        sequelize: RefreshToken.sequelize,
+        sequelize,
         tableName: 'refresh_tokens',
         modelName: 'RefreshToken',
       },

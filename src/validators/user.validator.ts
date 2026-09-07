@@ -11,17 +11,11 @@ export const updateProfileValidator = [
     .trim()
     .isLength({ min: 1, max: 100 })
     .withMessage('Last name must be 1-100 characters'),
-  body('email')
-    .optional()
-    .isEmail()
-    .normalizeEmail()
-    .withMessage('Must be a valid email'),
+  body('email').optional().isEmail().normalizeEmail().withMessage('Must be a valid email'),
 ];
 
 export const changePasswordValidator = [
-  body('currentPassword')
-    .notEmpty()
-    .withMessage('Current password is required'),
+  body('currentPassword').notEmpty().withMessage('Current password is required'),
   body('newPassword')
     .isLength({ min: 8 })
     .withMessage('New password must be at least 8 characters')
